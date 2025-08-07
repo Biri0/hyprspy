@@ -3,8 +3,12 @@ import subprocess
 import json
 import time
 import datetime
+import os
 
-con = sqlite3.connect("logs.db")
+script_dir = os.path.dirname(os.path.abspath(__file__))
+db_path = os.path.join(script_dir, "logs.db")
+con = sqlite3.connect(db_path)
+
 cur = con.cursor()
 cur.execute("CREATE TABLE IF NOT EXISTS logs(start_time, end_time, class, title)")
 activewindow = (0, 0)
