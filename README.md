@@ -5,7 +5,7 @@ HyprSpy is a lightweight Python utility for tracking your active window usage on
 ## Features
 
 - Monitors the active window every second
-- Logs window class and title with start and end timestamps
+- Logs window class and title with start time and duration
 - Stores data in a local SQLite database (`logs.db`)
 - Simple, efficient, and easy to use
 
@@ -14,7 +14,7 @@ HyprSpy is a lightweight Python utility for tracking your active window usage on
 - Python 3.7 or newer
 - [Hyprland](https://github.com/hyprwm/Hyprland) window manager
 - `hyprctl` command-line tool (included with Hyprland)
-- Standard Python libraries: `sqlite3`, `subprocess`, `json`, `datetime`, `time`
+- Standard Python libraries: `sqlite3`, `subprocess`, `json`, `time`, `os`, `sys`, `atexit`
 
 ## Installation
 
@@ -24,37 +24,42 @@ HyprSpy is a lightweight Python utility for tracking your active window usage on
     cd hyprspy
     ```
 
-2. Ensure you are running Hyprland and have `hyprctl` available in your PATH.
+2. Make sure you are running Hyprland and have `hyprctl` available in your PATH.
 
-## Usage
+## Recommended Usage
 
-Simply run the main script:
+The best way to start HyprSpy is to add the following line to your `hyprland.conf` file:
+```
+exec-once = python3 /absolute/path/to/hyprspy/main.py
+```
+Replace `/absolute/path/to/hyprspy/main.py` with the actual path to the file on your system. This will ensure HyprSpy starts automatically when your Hyprland session begins.
 
+## Manual Usage
+
+You can also run the script manually:
 ```bash
 python3 main.py
 ```
-
-This will start logging your active window information to `logs.db` in the current directory. The script runs indefinitely, updating the database every second.
+This will start logging your active window information to `logs.db` located in the same directory as the script, regardless of where you run the command. The script runs indefinitely, updating the database every second.
 
 ## Database Schema
 
 HyprSpy creates a SQLite database named `logs.db` with a single table:
 
-- `logs(start_time, end_time, class, title)`
+- `logs(start_time, seconds, class, title)`
 
-Each entry represents a period during which a specific window was active. The `start_time` and `end_time` are ISO-formatted timestamps, while `class` and `title` describe the window.
+Each entry represents a period during which a specific window was active. `start_time` is a timestamp in milliseconds, `seconds` is the duration in seconds, while `class` and `title` describe the window.
 
 ## Example Query
 
 To view your logged window activity, you can use the SQLite CLI:
-
 ```bash
 sqlite3 logs.db "SELECT * FROM logs ORDER BY start_time DESC LIMIT 10;"
 ```
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
