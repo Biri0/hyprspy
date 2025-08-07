@@ -3,9 +3,45 @@ import subprocess
 import json
 import time
 import os
+import sys
+import atexit
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(script_dir, "logs.db")
+lock_file = os.path.join(script_dir, "hyprspy.lock")
+
+
+def check_if_running():
+    if os.path.exists(lock_file):
+        try:
+            with open(lock_file, "r") as f:
+                pid = int(f.read().strip())
+
+            try:
+                os.kill(pid, 0)
+                print(f"Hyprspy is already running with PID {pid}")
+                sys.exit(1)
+            except OSError:
+                os.remove(lock_file)
+        except (ValueError, FileNotFoundError):
+            if os.path.exists(lock_file):
+                os.remove(lock_file)
+
+
+def create_lock():
+    with open(lock_file, "w") as f:
+        f.write(str(os.getpid()))
+
+
+def cleanup():
+    if os.path.exists(lock_file):
+        os.remove(lock_file)
+
+
+check_if_running()
+create_lock()
+atexit.register(cleanup)
+
 con = sqlite3.connect(db_path)
 
 cur = con.cursor()
