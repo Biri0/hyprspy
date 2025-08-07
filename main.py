@@ -16,6 +16,11 @@ activewindow = (0, 0)
 while True:
     output = subprocess.run(["hyprctl", "-j", "activewindow"], capture_output=True)
 
+    if output.stdout == b"{}\n":
+        activewindow = (0, 0)
+        time.sleep(1)
+        continue
+
     dump = json.loads(output.stdout.decode())
 
     cur_time = datetime.datetime.today().isoformat()
