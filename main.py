@@ -48,7 +48,7 @@ cur = con.cursor()
 cur.execute("CREATE TABLE IF NOT EXISTS logs(start_time, seconds, class, title)")
 
 activewindow = (0, 0)
-seconds = 0
+seconds = 1
 
 while True:
     output = subprocess.run(["hyprctl", "-j", "activewindow"], capture_output=True)
@@ -72,7 +72,7 @@ while True:
             (seconds,),
         )
     else:
-        seconds = 0
+        seconds = 1
         cur.execute(
             "INSERT INTO logs(start_time, seconds, class, title) VALUES (?, ?, ?, ?)",
             (
