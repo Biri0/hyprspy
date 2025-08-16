@@ -7,6 +7,7 @@ HyprSpy is a lightweight Python utility for tracking your active window usage on
 - Monitors the active window every second
 - Logs window class and title with start time and duration
 - Stores data in a local SQLite database (`logs.db`)
+- Sends a notification after a configurable number of minutes (`notify_minutes`) of continuous usage of the same application (with `--usage`)
 - Simple, efficient, and easy to use
 
 ## Requirements

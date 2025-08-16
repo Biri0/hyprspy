@@ -5,6 +5,20 @@ import time
 import os
 import sys
 import atexit
+from datetime import datetime
+import argparse
+
+notify_minutes = 25
+parser = argparse.ArgumentParser(
+    prog="Hyprspy",
+    description="Track time spent on applications"
+)
+parser.add_argument(
+    "-u", "--usage",
+    help=f"Send a notification every {notify_minutes} minutes spent using the same application",
+    action="store_true"
+)
+args = parser.parse_args()
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(script_dir, "logs.db")
@@ -67,6 +81,8 @@ while True:
     currentwindow = (wclass, title)
     if currentwindow == activewindow:
         seconds += 1
+        if args.usage and seconds // 60 % notify_minutes == 0 and seconds % 60 == 0:
+            subprocess.run(["notify-send", f"It's {datetime.now().strftime('%H:%M')}", f"You've been using this app for {seconds // 60} minutes"])
         cur.execute(
             "UPDATE logs SET seconds = ? WHERE start_time = (SELECT MAX(start_time) FROM logs)",
             (seconds,),
